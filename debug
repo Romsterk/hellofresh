@@ -1,0 +1,38 @@
+After uploading file I recieve "undefined" message, in browser`s console it comes to
+resumeUploadNew.js?v=1:79 in file validation (https://cdn-prod-static.phenompeople.com/CareerConnectResources/HELLGLOBAL/js/apply/resumeUploadNew.js?v=1)
+but it looks correct. 
+Then I saw this construction:
+
+console.log("in fileUpload");
+	var file = this.files[0]; /// type = file
+	if (typeof file !== "undefined") {  /// <==HERE IS OPENING of "if" construction, should be = file, but it seems to be = undefined O_o 
+		var file_name = file.name;
+		var file_size = file.size;
+		var file_ext = getFileExtention(file_name);
+		var isValid = fileValidation(file_name,file_size,file_ext);
+		if (isValid) {
+			console.log("valid file ..proceed");
+			var data = new FormData();
+			data.append('file', file);
+			jQuery.ajax({
+				type : 'POST',
+				data : data,
+				url : phApp.rootDomain + "/fileUpload",
+				cache : false,
+				processData : false,
+				contentType : false,
+				beforeSend : function() {
+					jQuery('.widget-loader').show();
+					jQuery('.overlaybg').show();
+				},
+				success : function(response) {
+					jQuery('.widget-loader').hide();
+	                jQuery('.overlaybg').hide();
+
+	                var obj= eval(response);
+	                uploadFile( obj, file_size, file_ext, "resumeupload", labelName, questionId );
+				}
+			});
+		}
+	}  /// <== HERE is closing, 1) where is "else" constuction with understandable error text?
+});
